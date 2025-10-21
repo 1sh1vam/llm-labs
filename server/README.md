@@ -1,98 +1,135 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# LLM Lab - Backend Server
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend API for the LLM Lab experimentation platform. Run LLM experiments with different parameter combinations and evaluate responses using programmatic quality metrics.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🎯 Features
 
-## Description
+- **LLM Integration**: Generate responses using Groq's fast LLM API (Mixtral, LLaMA, etc.)
+- **Parameter Experimentation**: Test different temperature, top_p, and max_tokens combinations
+- **Quality Metrics**: 5 key programmatic metrics to evaluate response quality without using another LLM
+- **Async Processing**: Non-blocking experiment execution with status tracking
+- **Data Persistence**: Store experiments and responses in Firebase Firestore
+- **Analytics**: Detailed metrics, correlations, and parameter impact analysis
+- **Export**: Download results in JSON or CSV format
+- **RESTful API**: Complete CRUD operations with validation
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📊 Quality Metrics
 
-## Project setup
+The system evaluates responses using **5 key metrics**:
 
+1. **Coherence Score** (25%) - Sentence quality, grammar, and structure
+2. **Relevancy Score** (25%) - How well it addresses the prompt
+3. **Completeness Score** (20%) - Response is not truncated
+4. **Repetition Score** (20%) - Detects loops and stuck responses
+5. **Length Score** (10%) - Appropriate response length
+
+**Overall Score** = Weighted average of all 5 metrics
+
+## 🏗️ Tech Stack
+
+- **Framework**: NestJS + TypeScript
+- **LLM Provider**: Groq
+- **Database**: Firebase Firestore
+- **Validation**: class-validator, class-transformer
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v18+)
+- Groq API key ([Get one here](https://console.groq.com/))
+- Firebase project with Firestore enabled
+
+### Installation
+
+1. **Install dependencies:**
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
-
+If you encounter npm permission errors:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+sudo chown -R $(whoami) ~/.npm
 ```
 
-## Run tests
-
+2. **Configure environment:**
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Copy template and edit with your credentials
+cp ENV_TEMPLATE.md .env
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+Required environment variables:
+```env
+GROQ_API_KEY=gsk_your_api_key_here
+FIREBASE_PROJECT_ID=your-project-id
+GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+3. **Run the server:**
+```bash
+# Development mode (hot reload)
+npm run start:dev
 
-## Resources
+# Production mode
+npm run build
+npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+Server starts at: `http://localhost:3001`
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+4. **Test the setup:**
+```bash
+curl http://localhost:3001/api/health
+```
 
-## Support
+## 📚 Documentation
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - Complete architecture and decisions taken
+- **[API_EXAMPLES.md](./API_EXAMPLES.md)** - API endpoint examples with curl commands and responses
 
-## Stay in touch
+## 📡 API Endpoints
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/experiments` | Create new experiment |
+| GET | `/api/experiments` | List all experiments (with pagination) |
+| GET | `/api/experiments/:id/metrics` | Get detailed metrics and analysis |
+| GET | `/api/experiments/:id/export` | Export as JSON or CSV |
+| DELETE | `/api/experiments/:id` | Delete experiment |
+| GET | `/api/health` | Health check |
 
-## License
+## 🔧 Development
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+# Format code
+npm run format
+
+# Lint and fix
+npm run lint
+
+# Debug mode
+npm run start:debug
+```
+
+## 🐛 Troubleshooting
+
+### Firebase Connection Error
+- Verify credentials in `.env`
+- Check service account key path
+- Ensure Firestore is enabled in Firebase console
+
+### Groq API Error
+- Verify API key is valid
+- Check Groq console for rate limits
+- Ensure `DEFAULT_MODEL` is supported
+
+### Port Already in Use
+```bash
+lsof -ti:3001 | xargs kill -9
+```
+
+## 📊 Performance
+
+- **Concurrent LLM calls**: 5 (configurable)
+- **Max combinations per experiment**: 20
+- **Average response time**: 2-3 seconds per LLM call
+- **Experiment processing**: Fully asynchronous

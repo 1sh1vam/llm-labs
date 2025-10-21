@@ -43,6 +43,11 @@ lerna-debug.log*
 .env.local
 .env*
 
+# Firebase credentials
+**/serviceAccountKey.json
+**/*firebase*.json
+!firebase.json
+
 # temp directory
 .temp
 .tmp
