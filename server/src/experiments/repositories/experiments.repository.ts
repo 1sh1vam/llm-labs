@@ -26,10 +26,26 @@ export class ExperimentsRepository {
     return this.firestoreService.getDocument(this.COLLECTION, id);
   }
 
-  async findAll(limit: number = 20, offset: number = 0): Promise<Experiment[]> {
-    return this.firestoreService.queryDocuments(this.COLLECTION, (ref) =>
-      ref.orderBy('createdAt', 'desc').limit(limit).offset(offset),
-    );
+  async findAll(
+    limit: number = 20,
+    startAfter?: string,
+  ): Promise<Experiment[]> {
+    if (startAfter) {
+      // Cursor-based pagination - efficient!
+      const startDoc = await this.firestoreService
+        .collection(this.COLLECTION)
+        .doc(startAfter)
+        .get();
+
+      return this.firestoreService.queryDocuments(this.COLLECTION, (ref) =>
+        ref.orderBy('createdAt', 'desc').startAfter(startDoc).limit(limit),
+      );
+    } else {
+      // First page
+      return this.firestoreService.queryDocuments(this.COLLECTION, (ref) =>
+        ref.orderBy('createdAt', 'desc').limit(limit),
+      );
+    }
   }
 
   async update(id: string, updates: Partial<Experiment>): Promise<void> {

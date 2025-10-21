@@ -356,12 +356,9 @@ export class ExperimentsService {
     }
   }
 
-  async getAllExperiments(
-    limit: number = 20,
-    offset: number = 0,
-  ): Promise<any> {
+  async getAllExperiments(limit: number = 20, cursor?: string): Promise<any> {
     try {
-      const experiments = await this.experimentsRepo.findAll(limit + 1, offset);
+      const experiments = await this.experimentsRepo.findAll(limit + 1, cursor);
 
       const hasMore = experiments.length > limit;
       const items = experiments.slice(0, limit);
@@ -398,8 +395,8 @@ export class ExperimentsService {
 
       return {
         experiments: experimentList,
-        total: items.length,
         hasMore,
+        nextCursor: hasMore ? items[items.length - 1].id : null,
       };
     } catch (error) {
       this.logger.error(`Failed to get all experiments:`, error);

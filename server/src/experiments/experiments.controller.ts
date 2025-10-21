@@ -69,12 +69,11 @@ export class ExperimentsController {
   @Get()
   async getAllExperiments(
     @Query('limit') limit?: string,
-    @Query('offset') offset?: string,
+    @Query('cursor') cursor?: string,
   ) {
     const limitNum = limit ? parseInt(limit, 10) : 20;
-    const offsetNum = offset ? parseInt(offset, 10) : 0;
 
-    return this.experimentsService.getAllExperiments(limitNum, offsetNum);
+    return this.experimentsService.getAllExperiments(limitNum, cursor);
   }
 
   @Get(':id/metrics')

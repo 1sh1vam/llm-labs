@@ -23,8 +23,8 @@ export class ExperimentListItemDto {
 
 export class ExperimentListResponseDto {
   experiments: ExperimentListItemDto[];
-  total: number;
   hasMore: boolean;
+  nextCursor: string | null;
 }
 
 export class MetricBreakdown {
