@@ -1,0 +1,12 @@
+Story,Task,Estimate min (hr),Estimate max (hr),Actual,Comment
+Experiment Backend,App setup,0.5,1,,
+,Schema for the persistence and DB setup,1.5,2,,
+,API for the response generation and metrics computation,2,3,,
+,API for getting the comparison,0.5,1,,
+,API for getting the entire history of experiments,1,1.5,,
+,API for export experiments,2,3,,
+Experiment Frontend,App setup,1,1.5,,
+,History page for all the experiments,2,3,,
+,Modal for new experiment,1,2,,
+,Comparison page for all the responses,2,3,,
+Deployment,Stitching together everything and deploying entire app,1,2,,
