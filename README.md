@@ -201,9 +201,6 @@ npm run build
 
 # Start production server
 npm start
-
-# Type checking
-npm run type-check
 ```
 
 ## 🧪 Example API Flow
