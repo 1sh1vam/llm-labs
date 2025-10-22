@@ -376,7 +376,7 @@ export class ExperimentsService {
           return {
             id: exp.id,
             prompt: exp.prompt,
-            createdAt: exp.createdAt,
+            createdAt: exp.createdAt?.toDate?.() || exp.createdAt,
             status: exp.status,
             totalResponses: exp.totalResponses,
             averageScore: exp.averageScore || 0,
