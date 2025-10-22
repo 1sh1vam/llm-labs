@@ -405,7 +405,9 @@ export class ExperimentsService {
     }
   }
 
-  async getExperimentMetrics(id: string): Promise<ExperimentMetricsDto> {
+  async getExperimentMetrics(
+    id: string,
+  ): Promise<{ metrics: ExperimentMetricsDto }> {
     try {
       const experiment = await this.experimentsRepo.findById(id);
 
@@ -432,21 +434,23 @@ export class ExperimentsService {
         id: r.id!,
         parameters: r.parameters,
         metrics: r.metrics,
-        responsePreview: r.responseText.substring(0, 100) + '...',
+        responsePreview: r.responseText,
       }));
 
       return {
-        experimentId: id,
-        prompt: experiment.prompt,
-        summary: {
-          totalResponses: successfulResponses.length,
-          averageScore: experiment.averageScore || 0,
-          bestScore: experiment.bestScore || 0,
-          worstScore: Math.min(...scores),
-          scoreDistribution,
+        metrics: {
+          experimentId: id,
+          prompt: experiment.prompt,
+          summary: {
+            totalResponses: successfulResponses.length,
+            averageScore: experiment.averageScore || 0,
+            bestScore: experiment.bestScore || 0,
+            worstScore: Math.min(...scores),
+            scoreDistribution,
+          },
+          metricBreakdown,
+          responses: responsePreviews,
         },
-        metricBreakdown,
-        responses: responsePreviews,
       };
     } catch (error) {
       this.logger.error(`Failed to get experiment metrics ${id}:`, error);
@@ -502,8 +506,8 @@ export class ExperimentsService {
         return JSON.stringify(data, null, 2);
       }
 
-      // Convert to CSV format
-      return this.convertToCSV({ responses: data.responses });
+      // Convert to CSV format - pass full data including experiment and responses
+      return this.convertToCSV(data);
     } catch (error) {
       this.logger.error(`Failed to export experiment ${id}:`, error);
 
@@ -589,21 +593,40 @@ export class ExperimentsService {
     };
   }
 
-  private convertToCSV(data: { responses: Response[] }): string {
+  private convertToCSV(data: {
+    experiment: Experiment;
+    responses: Response[];
+  }): string {
     const rows: string[] = [];
 
-    // Header - Top 5 metrics only
+    // Helper to escape CSV values (handle quotes and commas)
+    const escapeCSV = (value: string): string => {
+      if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+        return `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    };
+
+    // Title row - Show prompt (common for all responses)
+    const prompt = escapeCSV(data.experiment?.prompt || 'Experiment Results');
+    rows.push(`Prompt: ${prompt}`);
+    rows.push(''); // Empty row for separation
+
+    // Header row
     rows.push(
-      'Response ID,Temperature,Top-P,Overall Score,Coherence Score,Relevancy Score,Completeness Score,Repetition Score,Length Score,Word Count,Latency (ms)',
+      'Response ID,Response Text,Temperature,Top-P,Overall Score,Coherence Score,Relevancy Score,Completeness Score,Repetition Score,Length Score,Word Count,Latency (ms)',
     );
 
     // Data rows
     data.responses.forEach((response: Response) => {
       const m = response.metrics;
       const p = response.parameters;
+      const responseText = escapeCSV(response.responseText);
+
       rows.push(
         [
           response.id,
+          responseText,
           p.temperature,
           p.topP,
           m.overallScore,
