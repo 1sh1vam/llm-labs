@@ -177,7 +177,7 @@ export default async function ExperimentDetailsPage({
                       <TableHead className="w-[120px]">Overall Score</TableHead>
                       <TableHead className="w-[100px]">Temperature</TableHead>
                       <TableHead className="w-[80px]">Top-P</TableHead>
-                      <TableHead className="w-[100px]">Max Tokens</TableHead>
+                      <TableHead className="w-[100px]">Length Score</TableHead>
                       <TableHead className="w-[110px]">Coherence</TableHead>
                       <TableHead className="w-[120px]">Completeness</TableHead>
                       <TableHead className="w-[110px]">Relevancy</TableHead>
@@ -214,7 +214,9 @@ export default async function ExperimentDetailsPage({
                             {response.parameters.topP}
                           </TableCell>
                           <TableCell className="text-sm">
-                            {response.parameters.maxTokens}
+                            <span className={getScoreColor(response.metrics.lengthScore)}>
+                              {formatScore(response.metrics.lengthScore)}
+                            </span>
                           </TableCell>
                           <TableCell className="text-sm">
                             <span className={getScoreColor(response.metrics.coherenceScore)}>
